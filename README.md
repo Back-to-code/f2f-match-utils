@@ -2,4 +2,4 @@
 
 _This repo is public intentionally_
 
-This is a shared repo that holds go packages mainly text matching.
+This is a shared repo that holds go packages mainly for text matching.
