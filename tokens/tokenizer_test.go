@@ -339,6 +339,69 @@ func TestToTokensTableDriven(t *testing.T) {
 	}
 }
 
+func TestDiacriticFolding(t *testing.T) {
+	tests := []struct {
+		name  string
+		input string
+		want  []string
+	}{
+		// Common Latin diacritics (NFD-decomposable).
+		{"dutch trema", "kassière", []string{"kassiere"}},
+		{"acute e", "café", []string{"cafe"}},
+		{"diaeresis i", "naïve", []string{"naive"}},
+		{"tilde n", "mañana", []string{"manana"}},
+		{"cedilla", "façade", []string{"facade"}},
+		{"umlaut", "Müller", []string{"muller"}},
+		{"ring above", "Ångström", []string{"angstrom"}},
+		{"grave", "voilà", []string{"voila"}},
+
+		// Non-decomposing specials.
+		{"eszett", "straße", []string{"strasse"}},
+		{"ae ligature", "encyclopædia", []string{"encyclopaedia"}},
+		{"oe ligature", "œuvre", []string{"oeuvre"}},
+		{"slashed o", "søn", []string{"son"}},
+		{"slashed l", "Łódź", []string{"lodz"}},
+		{"thorn", "þorn", []string{"thorn"}},
+		{"eth", "garðr", []string{"gardr"}},
+
+		// Folding makes accented and plain spellings collapse together.
+		{"multiple words", "Beyoncé café", []string{"beyonce", "cafe"}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var got []string
+			for word := range sanitizedWords(tt.input) {
+				got = append(got, word)
+			}
+
+			if len(got) != len(tt.want) {
+				t.Fatalf("input %q: expected %v, got %v", tt.input, tt.want, got)
+			}
+			for i := range tt.want {
+				if got[i] != tt.want[i] {
+					t.Errorf("input %q: word %d expected %q, got %q", tt.input, i, tt.want[i], got[i])
+				}
+			}
+		})
+	}
+}
+
+func TestDiacriticFoldingTokenEquality(t *testing.T) {
+	resetState()
+
+	// Accented and plain spellings must map to the same token.
+	accented := ToTokens("café")
+	plain := ToTokens("cafe")
+
+	if len(accented) != 1 || len(plain) != 1 {
+		t.Fatalf("expected 1 token each, got %d and %d", len(accented), len(plain))
+	}
+	if accented[0] != plain[0] {
+		t.Errorf("café and cafe should produce the same token, got %d and %d", accented[0], plain[0])
+	}
+}
+
 func TestAbbreviationHandling(t *testing.T) {
 	tests := []struct {
 		name          string
