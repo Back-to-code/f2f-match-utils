@@ -18,10 +18,12 @@ func CacheSize() int {
 	return size
 }
 
-// ToTokens converts a string into tokens.
-// Allownewtokens is a flag that determines whether new tokens should be created for words that are not already in the tokenizer's wordToToken map.
-// If allownewtokens = false and a token is not found, the function returns [].
-// If an empty string is passed, the function will return nil.
+// ToTokens converts a string into unique tokens.
+// Every word is converted to a unique token.
+// Some inputs have multiple ways to convert the input to tokens, for those cases we return multiple responses.
+// The outer slice are the total variants (mainly 1), the inner slice is the input string as a list of tokens
+// When you want the strictest token variant use the first response (resp[0]) but do note that resp might be a empty slice
+// Note "" will produce [] and not [[]]!
 func ToTokens(in string) [][]Token {
 	lock.RLock()
 	cacheEntry, ok := toTokenCache[in]
