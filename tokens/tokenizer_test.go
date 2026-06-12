@@ -8,7 +8,7 @@ import (
 // resetState clears all global tokenizer state so tests start fresh.
 func resetState() {
 	lock.Lock()
-	toTokenCache = make(map[string][]Token, 1024)
+	toTokenCache = make(map[string][][]Token, 1024)
 	wordToToken = make(map[string]Token, 1024)
 	lock.Unlock()
 }
@@ -22,17 +22,17 @@ func TestToTokensBasic(t *testing.T) {
 		t.Fatal("Expected tokens but got nil")
 	}
 
-	if len(tokens) != 2 {
-		t.Fatalf("Expected 2 tokens, got %d", len(tokens))
+	if len(tokens[0]) != 2 {
+		t.Fatalf("Expected 2 tokens, got %d", len(tokens[0]))
 	}
 
 	// Verify tokens are created consistently
 	tokens2 := ToTokens("Hello World")
-	if len(tokens2) != 2 {
-		t.Fatalf("Expected 2 tokens on second call, got %d", len(tokens2))
+	if len(tokens2[0]) != 2 {
+		t.Fatalf("Expected 2 tokens on second call, got %d", len(tokens2[0]))
 	}
 
-	if tokens[0] != tokens2[0] || tokens[1] != tokens2[1] {
+	if tokens[0][0] != tokens2[0][0] || tokens[0][1] != tokens2[0][1] {
 		t.Fatal("Tokens should be consistent across calls")
 	}
 }
@@ -55,8 +55,8 @@ func TestToTokensFiltersIllegalWords(t *testing.T) {
 	tokens := ToTokens("the quick brown fox")
 
 	// "the" is an illegal word, should be filtered out
-	if len(tokens) != 3 {
-		t.Fatalf("Expected 3 tokens (quick, brown, fox), got %d", len(tokens))
+	if len(tokens[0]) != 3 {
+		t.Fatalf("Expected 3 tokens (quick, brown, fox), got %d", len(tokens[0]))
 	}
 
 	// Verify with more illegal words
@@ -77,7 +77,7 @@ func TestToTokensHandlesCaseInsensitivity(t *testing.T) {
 		t.Fatal("Expected 1 token for each variation")
 	}
 
-	if tokens1[0] != tokens2[0] || tokens1[0] != tokens3[0] {
+	if tokens1[0][0] != tokens2[0][0] || tokens1[0][0] != tokens3[0][0] {
 		t.Fatal("Expected same token for case variations")
 	}
 }
@@ -98,7 +98,7 @@ func TestToTokensUsesCache(t *testing.T) {
 	}
 
 	for i := range tokens1 {
-		if tokens1[i] != tokens2[i] {
+		if tokens1[0][i] != tokens2[0][i] {
 			t.Fatalf("Token mismatch at index %d", i)
 		}
 	}
@@ -117,7 +117,7 @@ func TestCleanupCacheClearsCache(t *testing.T) {
 	}
 
 	for i := range tokens1 {
-		if tokens1[i] != tokens2[i] {
+		if tokens1[0][i] != tokens2[0][i] {
 			t.Fatalf("Token mismatch at index %d after cache cleanup", i)
 		}
 	}
@@ -151,8 +151,8 @@ func TestToTokensHandlesPunctuationAndSpecialCharacters(t *testing.T) {
 	tokens := ToTokens("Hello, World! How are you?")
 
 	// Should extract: hello, world, how, you (are is an illegal word)
-	if len(tokens) != 4 {
-		t.Fatalf("Expected 4 tokens, got %d", len(tokens))
+	if len(tokens[0]) != 4 {
+		t.Fatalf("Expected 4 tokens, got %d", len(tokens[0]))
 	}
 }
 
@@ -163,15 +163,15 @@ func TestToTokensIncrementsTokenIDsCorrectly(t *testing.T) {
 	tokens2 := ToTokens("second")
 	tokens3 := ToTokens("third")
 
-	if tokens1[0] != 0 {
+	if tokens1[0][0] != 0 {
 		t.Fatalf("First token should be 0, got %d", tokens1[0])
 	}
 
-	if tokens2[0] != 1 {
+	if tokens2[0][0] != 1 {
 		t.Fatalf("Second token should be 1, got %d", tokens2[0])
 	}
 
-	if tokens3[0] != 2 {
+	if tokens3[0][0] != 2 {
 		t.Fatalf("Third token should be 2, got %d", tokens3[0])
 	}
 }
@@ -181,8 +181,8 @@ func TestToTokensHandlesMultipleSpaces(t *testing.T) {
 
 	tokens := ToTokens("word1    word2")
 
-	if len(tokens) != 2 {
-		t.Fatalf("Expected 2 tokens, got %d", len(tokens))
+	if len(tokens[0]) != 2 {
+		t.Fatalf("Expected 2 tokens, got %d", len(tokens[0]))
 	}
 }
 
@@ -214,7 +214,7 @@ func TestToTokensTableDriven(t *testing.T) {
 		{"with parentheses", "(hello) (world)", 2, "parentheses"},
 		{"with brackets", "[hello] [world]", 2, "square brackets"},
 		{"with braces", "{hello} {world}", 2, "curly braces"},
-		{"with dash", "hello-world", 2, "dash separated"},
+		{"with dash", "hello-world", 1, "dash separated"},
 		{"with underscore", "hello_world", 2, "underscore separated"},
 		{"with slash", "hello/world", 2, "slash separated"},
 		{"with backslash", "hello\\world", 2, "backslash separated"},
@@ -314,7 +314,7 @@ func TestToTokensTableDriven(t *testing.T) {
 
 		// Repeated punctuation
 		{"multiple dots", "hello...world", 2, "ellipsis"},
-		{"multiple dashes", "hello---world", 2, "multiple dashes"},
+		{"multiple dashes", "hello---world", 1, "multiple dashes"},
 		{"multiple questions", "what??? really???", 2, "multiple question marks"},
 
 		// Long words
@@ -323,7 +323,7 @@ func TestToTokensTableDriven(t *testing.T) {
 
 		// Mixed everything
 		{"chaos", "Hello123!!! @#$world456??? test...test+++END", 5, "chaotic mix"},
-		{"real chaos", "The_QUICK-brown@FOX#123 jumps!!! over...the LAZY~~~dog???", 6, "real chaos"},
+		{"real chaos", "The_QUICK-brown@FOX#123 jumps!!! over...the LAZY~~~dog???", 5, "real chaos"},
 	}
 
 	for _, tt := range tests {
@@ -331,9 +331,16 @@ func TestToTokensTableDriven(t *testing.T) {
 			resetState()
 			tokens := ToTokens(tt.input)
 
-			if len(tokens) != tt.expectedCount {
+			// tt.expectedCount is the word count of the primary (combined)
+			// interpretation, i.e. branch 0. Empty/all-illegal inputs yield no
+			// branches at all.
+			got := 0
+			if len(tokens) > 0 {
+				got = len(tokens[0])
+			}
+			if got != tt.expectedCount {
 				t.Errorf("%s: expected %d tokens, got %d (input: %q)",
-					tt.description, tt.expectedCount, len(tokens), tt.input)
+					tt.description, tt.expectedCount, got, tt.input)
 			}
 		})
 	}
@@ -371,8 +378,12 @@ func TestDiacriticFolding(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var got []string
-			for word := range sanitizedWords(tt.input) {
-				got = append(got, word)
+			for part := range sanitizedWords(tt.input) {
+				full := part.base
+				if part.addition != nil {
+					full += *part.addition
+				}
+				got = append(got, full)
 			}
 
 			if len(got) != len(tt.want) {
@@ -397,7 +408,7 @@ func TestDiacriticFoldingTokenEquality(t *testing.T) {
 	if len(accented) != 1 || len(plain) != 1 {
 		t.Fatalf("expected 1 token each, got %d and %d", len(accented), len(plain))
 	}
-	if accented[0] != plain[0] {
+	if accented[0][0] != plain[0][0] {
 		t.Errorf("café and cafe should produce the same token, got %d and %d", accented[0], plain[0])
 	}
 }
@@ -512,9 +523,13 @@ func TestAbbreviationHandling(t *testing.T) {
 			resetState()
 			tokens := ToTokens(tt.input)
 
-			if len(tokens) != tt.expectedCount {
+			got := 0
+			if len(tokens) > 0 {
+				got = len(tokens[0])
+			}
+			if got != tt.expectedCount {
 				t.Errorf("%s: expected %d tokens, got %d (input: %q)",
-					tt.description, tt.expectedCount, len(tokens), tt.input)
+					tt.description, tt.expectedCount, got, tt.input)
 			}
 		})
 	}
@@ -532,11 +547,11 @@ func TestAbbreviationConsistency(t *testing.T) {
 		t.Fatal("Expected 1 token for each abbreviation variant")
 	}
 
-	if tokens1[0] != tokens2[0] {
+	if tokens1[0][0] != tokens2[0][0] {
 		t.Error("Same abbreviation should produce same token")
 	}
 
-	if tokens1[0] != tokens3[0] {
+	if tokens1[0][0] != tokens3[0][0] {
 		t.Error("Case-insensitive: H.B.O. and h.b.o. should produce same token")
 	}
 }
@@ -546,26 +561,26 @@ func TestAbbreviationVsRegularPeriod(t *testing.T) {
 
 	// "H.B.O." should be 1 token (abbreviation)
 	abbr := ToTokens("H.B.O.")
-	if len(abbr) != 1 {
-		t.Errorf("H.B.O. should be 1 token, got %d", len(abbr))
+	if len(abbr[0]) != 1 {
+		t.Errorf("H.B.O. should be 1 token, got %d", len(abbr[0]))
 	}
 
 	// "hello." should be 1 token (word with period at end)
 	word := ToTokens("hello.")
-	if len(word) != 1 {
-		t.Errorf("hello. should be 1 token, got %d", len(word))
+	if len(word[0]) != 1 {
+		t.Errorf("hello. should be 1 token, got %d", len(word[0]))
 	}
 
 	// "hello. world." should be 2 tokens
 	sentence := ToTokens("hello. world.")
-	if len(sentence) != 2 {
-		t.Errorf("hello. world. should be 2 tokens, got %d", len(sentence))
+	if len(sentence[0]) != 2 {
+		t.Errorf("hello. world. should be 2 tokens, got %d", len(sentence[0]))
 	}
 
 	// "H. B. O." should be 3 tokens (not an abbreviation due to spaces)
 	notAbbr := ToTokens("H. B. O.")
-	if len(notAbbr) != 3 {
-		t.Errorf("H. B. O. should be 3 tokens, got %d", len(notAbbr))
+	if len(notAbbr[0]) != 3 {
+		t.Errorf("H. B. O. should be 3 tokens, got %d", len(notAbbr[0]))
 	}
 }
 
@@ -617,5 +632,121 @@ func TestCacheSize(t *testing.T) {
 	CleanupCache()
 	if CacheSize() != 0 {
 		t.Fatalf("Expected cache size 0 after cleanup, got %d", CacheSize())
+	}
+}
+
+// equalTokens reports whether two token branches are identical.
+func equalTokens(a, b []Token) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// TestToTokensMultiBranchCount checks when a hyphenated word causes ToTokens to
+// branch into multiple interpretations. A word containing exactly one interior
+// dash branches into two interpretations (combined + split); everything else
+// stays a single interpretation.
+func TestToTokensMultiBranchCount(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		branches int
+		desc     string
+	}{
+		{"empty", "", 0, "empty input yields no branches"},
+		{"single dash", "hello-world", 2, "one interior dash branches into combined + split"},
+		{"hyphenated name", "anne-marie", 2, "hyphenated name branches"},
+		{"dash word then word", "hello-world foo", 2, "branches even with a following word"},
+		{"word then dash word", "foo hello-world", 2, "branches when hyphen word is not first"},
+		{"two dashes", "a-b-c", 1, "more than one dash does not branch"},
+		{"consecutive dashes", "hello--world", 1, "consecutive dashes do not branch"},
+		{"leading dash", "-hello", 1, "leading dash does not branch"},
+		{"trailing dash", "hello-", 1, "trailing dash does not branch"},
+		{"plain words", "hello world", 1, "plain words never branch"},
+		{"empty", "", 0, "empty input yields no branches"},
+		{"dash only", "-", 0, "a lone dash yields no branches"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			resetState()
+			got := ToTokens(tt.input)
+			if len(got) != tt.branches {
+				t.Errorf("%s: expected %d branches, got %d (input %q -> %v)",
+					tt.desc, tt.branches, len(got), tt.input, got)
+			}
+		})
+	}
+}
+
+// TestToTokensMultiBranchInterpretations verifies the meaning of the two
+// branches: branch 0 is the combined interpretation (the de-hyphenated word as a
+// single token) and branch 1 is the split interpretation (the two halves as
+// separate tokens). The constituent forms are registered first so the branch
+// reuses their stable tokens.
+func TestToTokensMultiBranchInterpretations(t *testing.T) {
+	resetState()
+
+	separate := ToTokens("hello world") // [[hello world]]
+	combined := ToTokens("helloworld")  // [[helloworld]]
+
+	dash := ToTokens("hello-world")
+	if len(dash) != 2 {
+		t.Fatalf("expected 2 branches, got %d: %v", len(dash), dash)
+	}
+
+	// Branch 0: combined interpretation, equal to the de-hyphenated word.
+	if !equalTokens(dash[0], combined[0]) {
+		t.Errorf("combined branch %v should equal helloworld tokens %v", dash[0], combined[0])
+	}
+
+	// Branch 1: split interpretation, equal to the two halves as separate words.
+	if !equalTokens(dash[1], separate[0]) {
+		t.Errorf("split branch %v should equal 'hello world' tokens %v", dash[1], separate[0])
+	}
+}
+
+// TestToTokensMultiBranchCached confirms a branched result is cached and returns
+// the same branches on a second call.
+func TestToTokensMultiBranchCached(t *testing.T) {
+	resetState()
+
+	first := ToTokens("anne-marie")
+	if len(first) != 2 {
+		t.Fatalf("expected 2 branches, got %d", len(first))
+	}
+	if CacheSize() == 0 {
+		t.Fatal("expected hyphenated input to be cached")
+	}
+
+	second := ToTokens("anne-marie")
+	if len(second) != len(first) {
+		t.Fatalf("cached branch count mismatch: %d vs %d", len(second), len(first))
+	}
+	for b := range first {
+		if !equalTokens(first[b], second[b]) {
+			t.Errorf("branch %d differs between calls: %v vs %v", b, first[b], second[b])
+		}
+	}
+}
+
+// TestToTokensMultiBranchNoEmptyBranches verifies branched results never contain
+// empty branches (the trailing filter loop drops them).
+func TestToTokensMultiBranchNoEmptyBranches(t *testing.T) {
+	resetState()
+
+	for _, in := range []string{"hello-world", "anne-marie bob", "foo hello-world"} {
+		resetState()
+		for b, branch := range ToTokens(in) {
+			if len(branch) == 0 {
+				t.Errorf("input %q: branch %d is empty", in, b)
+			}
+		}
 	}
 }

@@ -148,13 +148,25 @@ var illegalWords = map[string]struct{}{
 	"wordt":  {},
 }
 
-func sanitizedWords(in string) iter.Seq[string] {
-	return func(yield func(string) bool) {
+type sanitizedWordT struct {
+	base     string
+	addition *string
+}
+
+func sanitizedWords(in string) iter.Seq[sanitizedWordT] {
+	return func(yield func(sanitizedWordT) bool) {
 		var currentWord = []rune{}
+		var dashCount int
+		var dashAt int
 
 		characters := []rune(in)
 		for i, c := range characters {
 			switch {
+			case c == '-':
+				if len(currentWord) > 0 {
+					dashCount++
+					dashAt = len(currentWord)
+				}
 			case c == '.' && i > 0 && i < len(characters)-1 && unicode.IsLetter(characters[i-1]) && unicode.IsLetter(characters[i+1]):
 				// Do nothing, handle abbreviations
 			case unicode.IsLetter(c):
@@ -165,21 +177,74 @@ func sanitizedWords(in string) iter.Seq[string] {
 					currentWord = append(currentWord, lc)
 				}
 			case len(currentWord) > 0:
-				currentStr := string(currentWord)
-				_, ok := illegalWords[currentStr]
-				if !ok && !yield(currentStr) {
-					return
+				if dashCount == 1 && len(currentWord) > dashAt {
+					base := string(currentWord[:dashAt])
+					_, baseIllegal := illegalWords[base]
+					additional := string(currentWord[dashAt:])
+					_, additionalIllegal := illegalWords[additional]
+					if baseIllegal && additionalIllegal {
+						currentWord = currentWord[:0]
+						dashCount = 0
+						continue
+					} else if !baseIllegal && !additionalIllegal {
+						if !yield(sanitizedWordT{base: base, addition: &additional}) {
+							return
+						}
+					} else if additionalIllegal {
+						if !yield(sanitizedWordT{base: base}) {
+							return
+						}
+					} else {
+						if !yield(sanitizedWordT{base: additional}) {
+							return
+						}
+					}
+				} else {
+					currentStr := string(currentWord)
+					_, ok := illegalWords[currentStr]
+					if ok {
+						currentWord = currentWord[:0]
+						dashCount = 0
+						continue
+					}
+
+					if !yield(sanitizedWordT{base: currentStr}) {
+						return
+					}
 				}
+
 				currentWord = currentWord[:0]
+				dashCount = 0
 			}
 		}
 
-		if len(currentWord) > 0 {
-			currentStr := string(currentWord)
-			_, ok := illegalWords[currentStr]
-			if !ok && !yield(currentStr) {
-				return
-			}
+		if len(currentWord) == 0 {
+			return
 		}
+
+		if dashCount == 1 && len(currentWord) > dashAt {
+			base := string(currentWord[:dashAt])
+			_, baseIllegal := illegalWords[base]
+			additional := string(currentWord[dashAt:])
+			_, additionalIllegal := illegalWords[additional]
+			if baseIllegal && additionalIllegal {
+				return
+			} else if !baseIllegal && !additionalIllegal {
+				_ = yield(sanitizedWordT{base: base, addition: &additional})
+			} else if additionalIllegal {
+				_ = yield(sanitizedWordT{base: base})
+			} else {
+				_ = yield(sanitizedWordT{base: additional})
+			}
+
+			return
+		}
+		currentStr := string(currentWord)
+		_, ok := illegalWords[currentStr]
+		if ok {
+			return
+		}
+
+		_ = yield(sanitizedWordT{base: currentStr})
 	}
 }
