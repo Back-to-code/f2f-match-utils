@@ -160,7 +160,22 @@ func sanitizedWords(in string) iter.Seq[sanitizedWordT] {
 		var dashAt int
 
 		characters := []rune(in)
+		lastIdx := len(characters) - 1
+		var skipNext bool
 		for i, c := range characters {
+			if skipNext {
+				skipNext = false
+				continue
+			}
+
+			if i < lastIdx {
+				replacement, ok := missformed[[2]rune{c, characters[i+1]}]
+				if ok {
+					c = replacement
+					skipNext = true
+				}
+			}
+
 			switch {
 			case c == '-':
 				if len(currentWord) > 0 {
