@@ -108,7 +108,7 @@ var illegalWords = map[string]struct{}{
 	"ik":     {},
 	"in":     {},
 	"is":     {},
-	"it":     {},
+	// "it": {}, -- Do not include "it" as in dutch it can also mean someone that works in the "it" industry
 	"je":     {},
 	"jou":    {},
 	"maar":   {},
