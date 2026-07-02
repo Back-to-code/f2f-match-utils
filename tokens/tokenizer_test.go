@@ -228,8 +228,8 @@ func TestToTokensTableDriven(t *testing.T) {
 		{"with equals", "hello=world", 2, "equals sign"},
 
 		// Numbers and mixed content
-		{"with numbers", "hello123world", 2, "numbers break words"},
-		{"pure numbers", "123 456 789", 0, "pure numbers filtered"},
+		{"with numbers", "hello123world", 1, "digits stay inside the word"},
+		{"pure numbers", "123 456 789", 3, "pure numbers are valid tokens"},
 		{"alphanumeric", "test1 test2 test3", 3, "alphanumeric words"},
 
 		// Whitespace variations
@@ -309,8 +309,8 @@ func TestToTokensTableDriven(t *testing.T) {
 		{"emoji context", "hello world great day", 4, "words with emoji context"},
 
 		// Date and time formats
-		{"date format", "2024-01-15", 0, "date with numbers"},
-		{"time format", "14:30:00", 0, "time with numbers"},
+		{"date format", "2024-01-15", 1, "dashed date folds into one number token"},
+		{"time format", "14:30:00", 3, "colon-separated numbers are three tokens"},
 
 		// Repeated punctuation
 		{"multiple dots", "hello...world", 2, "ellipsis"},
@@ -323,7 +323,7 @@ func TestToTokensTableDriven(t *testing.T) {
 
 		// Mixed everything
 		{"chaos", "Hello123!!! @#$world456??? test...test+++END", 5, "chaotic mix"},
-		{"real chaos", "The_QUICK-brown@FOX#123 jumps!!! over...the LAZY~~~dog???", 5, "real chaos"},
+		{"real chaos", "The_QUICK-brown@FOX#123 jumps!!! over...the LAZY~~~dog???", 6, "real chaos"},
 	}
 
 	for _, tt := range tests {
@@ -473,7 +473,7 @@ func TestAbbreviationHandling(t *testing.T) {
 		{"single letter period", "A.", 1, "single letter with period"},
 		{"two letters period", "A.B.", 1, "two letters with periods"},
 		{"abbr no trailing", "H.B.O", 1, "abbreviation without trailing period"},
-		{"period between digits", "3.14", 0, "period between numbers (not abbr)"},
+		{"period between digits", "3.14", 1, "decimal keeps digits joined via dot rule"},
 
 		// Academic/Professional titles
 		{"Dr", "Dr.", 1, "Doctor abbreviation"},
@@ -485,7 +485,7 @@ func TestAbbreviationHandling(t *testing.T) {
 		// Real-world examples
 		{"email domain", "example.com", 1, "domain with period treated as abbr"},
 		{"file extension", "file.txt", 1, "file with extension treated as abbr"},
-		{"version number", "v1.2.3", 1, "version number"},
+		{"version number", "v1.2.3", 1, "version number folds into one token via dot rule"},
 
 		// Academic degrees
 		{"BSc", "B.S.c.", 1, "Bachelor of Science"},

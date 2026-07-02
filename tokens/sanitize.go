@@ -153,6 +153,10 @@ type sanitizedWordT struct {
 	addition *string
 }
 
+func isLetterOrNumber(c rune) bool {
+	return unicode.IsLetter(c) || c >= '0' && c <= '9'
+}
+
 func sanitizedWords(in string) iter.Seq[sanitizedWordT] {
 	return func(yield func(sanitizedWordT) bool) {
 		var currentWord = []rune{}
@@ -182,7 +186,7 @@ func sanitizedWords(in string) iter.Seq[sanitizedWordT] {
 					dashCount++
 					dashAt = len(currentWord)
 				}
-			case c == '.' && i > 0 && i < len(characters)-1 && unicode.IsLetter(characters[i-1]) && unicode.IsLetter(characters[i+1]):
+			case c == '.' && i > 0 && i < len(characters)-1 && isLetterOrNumber(characters[i-1]) && isLetterOrNumber(characters[i+1]):
 				// Do nothing, handle abbreviations
 			case unicode.IsLetter(c):
 				lc := unicode.ToLower(c)
@@ -191,6 +195,8 @@ func sanitizedWords(in string) iter.Seq[sanitizedWordT] {
 				} else {
 					currentWord = append(currentWord, lc)
 				}
+			case c >= '0' && c <= '9':
+				currentWord = append(currentWord, c)
 			case len(currentWord) > 0:
 				if dashCount == 1 && len(currentWord) > dashAt {
 					base := string(currentWord[:dashAt])
