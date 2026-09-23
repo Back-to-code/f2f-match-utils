@@ -237,6 +237,10 @@ func TestParse(t *testing.T) {
 		{"li", CodeOf("lim")},
 		{"Fries", CodeOf("fry")},
 
+		// Both are also the name of an unoffered language further down the list.
+		{"Afaan Oromoo", CodeOf("orm")},
+		{"Pidgin", CodeOf("pcm")},
+
 		// "mei" is the Dutch month but also the ISO 639-3 code of Midob, and a code
 		// always wins. Language fields do hold bare codes, "nl" among them.
 		{"mei", CodeOf("mei")},
@@ -262,6 +266,10 @@ func TestNamesThatMustNotParse(t *testing.T) {
 		// Ambiguous between Moroccan Arabic and the Berber languages, both of which we
 		// do list, so guessing one of them would be wrong more often than not.
 		"marokkaans",
+		"moroccan",
+
+		// Syrian Arabic, or the Aramaic of Syrian Christians. Both are listed.
+		"syrisch",
 
 		"germanic languages",
 		"overig",

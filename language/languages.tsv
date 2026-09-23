@@ -8,114 +8,114 @@
 # Regenerate tables_gen.go after editing: go generate ./language/...
 
 # The languages seen most often in practice, most frequent first.
-nld	nl	Nederlands	Dutch	Nederlands	dut,nedersaksisch,nedersaksies,nederduits,platduits,low german,drents,dreents,drenths,gronings,grunnegs,grunnings,twents,tweants,zeeuws,westvlaams,westvlams,vlaams,limburgs,limburgan,lemburgs,achterhoeks,achterhooks,sallands,stellingwerfs,stellingwarfs,veluws
-eng	en	Engels	English	English
+nld	nl	Nederlands	Dutch	Nederlands	dut,nedersaksisch,nedersaksies,nederduits,platduits,low german,drents,dreents,drenths,gronings,grunnegs,grunnings,twents,tweants,zeeuws,westvlaams,westvlams,vlaams,limburgs,limburgan,lemburgs,achterhoeks,achterhooks,sallands,stellingwerfs,stellingwarfs,veluws,flemish,limburgish,low saxon,hollands,brabants,plat,west vlaams
+eng	en	Engels	English	English	british english,american english,brits engels,amerikaans engels
 deu	de	Duits	German	Deutsch	ger
 fra	fr	Frans	French	français	fre
-spa	es	Spaans	Spanish	español
+spa	es	Spaans	Spanish	español	castilian,castiliaans,castellano
 pol	pl	Pools	Polish	polski
 ara	ar	Arabisch	Arabic	العربية
 rus	ru	Russisch	Russian	русский
 ita	it	Italiaans	Italian	italiano
 tur	tr	Turks	Turkish	Türkçe
-por	pt	Portugees	Portuguese	português
-ukr	uk	Oekraïens	Ukrainian	українська
+por	pt	Portugees	Portuguese	português	brazilian portuguese,braziliaans,portugese
+ukr	uk	Oekraïens	Ukrainian	українська	oekrains
 hin	hi	Hindi	Hindi	हिन्दी
 ron	ro	Roemeens	Romanian	română	rum,moldavisch,moldavian
 zho	zh	Chinese talen	Chinese	中文	chi,chinees
-ell	el	Grieks	Modern Greek (1453-)	Ελληνικά	gre
+ell	el	Grieks	Modern Greek (1453-)	Ελληνικά	gre,greek,modern greek
 bul	bg	Bulgaars	Bulgarian	български
 hun	hu	Hongaars	Hungarian	magyar
 ind	id	Indonesisch	Indonesian	Indonesia
 swe	sv	Zweeds	Swedish	svenska
-fas	fa	Perzisch (Farsi)	Persian	فارسی	perzisch,farsi,per
+fas	fa	Perzisch (Farsi)	Persian	فارسی	perzisch,farsi,per,iraans
 jpn	ja	Japans	Japanese	日本語
-hbs	sh	Servo-Kroatisch	Serbo-Croatian	srpskohrvatski	servo kroatisch
-fry	fy	Westerlauwers Fries	Western Frisian	Frysk	fries
+hbs	sh	Servo-Kroatisch	Serbo-Croatian	srpskohrvatski	servo kroatisch,serbo croatian,joegoslavisch
+fry	fy	Westerlauwers Fries	Western Frisian	Frysk	fries,frisian,west frisian
 lit	lt	Litouws	Lithuanian	lietuvių
 slk	sk	Slowaaks	Slovak	slovenčina	slo
 nor	no	Noors	Norwegian	norsk
 ces	cs	Tsjechisch	Czech	čeština	cze
-lav	lv	Lets	Latvian	latviešu
+lav	lv	Lets	Latvian	latviešu	lettisch
 hrv	hr	Kroatisch	Croatian	hrvatski	scr
-urd	ur	Urdu	Urdu	اردو
+urd	ur	Urdu	Urdu	اردو	oerdoe
 vie	vi	Vietnamees	Vietnamese	Tiếng Việt
 dan	da	Deens	Danish	dansk
 cat	ca	Catalaans	Catalan	català
 kor	ko	Koreaans	Korean	한국어
-heb	he	Hebreeuws	Hebrew	עברית
+heb	he	Hebreeuws	Hebrew	עברית	ivriet
 tam	ta	Tamil	Tamil	தமிழ்
 fin	fi	Fins	Finnish	suomi
-tha	th	Thai	Thai	ไทย
-est	et	Estisch	Estonian	eesti
+tha	th	Thai	Thai	ไทย	thais
+est	et	Estisch	Estonian	eesti	ests
 afr	af	Afrikaans	Afrikaans	Afrikaans
 lat	la	Latijn	Latin	Latina
-msa	ms	Maleis	Malay (macrolanguage)	Melayu	may
+msa	ms	Maleis	Malay (macrolanguage)	Melayu	may,malay,maleisisch
 swa	sw	Swahili	Swahili (macrolanguage)	Kiswahili
-srp	sr	Servisch	Serbian	српски	scc
+srp	sr	Servisch	Serbian	српски	scc,serbisch
 som	so	Somalisch	Somali	Soomaali
-slv	sl	Sloveens	Slovenian	slovenščina
-pus	ps	Pasjtoe	Pushto	پښتو
+slv	sl	Sloveens	Slovenian	slovenščina	slovene
+pus	ps	Pasjtoe	Pushto	پښتو	pashto,pashtu,pakhto,pasjto,pashtoe
 tgl	tl	Tagalog	Tagalog	Tagalog
-sqi	sq	Albanees	Albanian	shqip	alb
+sqi	sq	Albanees	Albanian	shqip	alb,albanisch
 mar	mr	Marathi	Marathi	मराठी
 tel	te	Telugu, Teloegoe	Telugu	తెలుగు	teloegoe
-amh	am	Amhaars	Amharic	አማርኛ
-kur	ku	Koerdisch	Kurdish	kurdî (kurmancî)
+amh	am	Amhaars	Amharic	አማርኛ	amharisch
+kur	ku	Koerdisch	Kurdish	kurdî (kurmancî)	kurdisch
 pan	pa	Punjabi	Panjabi	ਪੰਜਾਬੀ
-gle	ga	Iers	Irish	Gaeilge
+gle	ga	Iers	Irish	Gaeilge	iersgaelisch,iers gaelisch
 mkd	mk	Macedonisch	Macedonian	македонски	mac
 epo	eo	Esperanto	Esperanto	esperanto
 hye	hy	Armeens	Armenian	հայերեն	arm
 guj	gu	Gujarati	Gujarati	ગુજરાતી
-aze	az	Azerbeidzjaans	Azerbaijani	azərbaycan
+aze	az	Azerbeidzjaans	Azerbaijani	azərbaycan	azeri
 kan	kn	Kannada (Kanarees, Kanara)	Kannada	ಕನ್ನಡ	kannada kanarees,kanara,kanarees kanara,kanarees
-ben	bn	Bengaals	Bengali	বাংলা
+ben	bn	Bengaals	Bengali	বাংলা	bangla,bengalees
 bos	bs	Bosnisch	Bosnian	bosanski
-tir	ti	Tigrinya	Tigrinya	ትግርኛ
+tir	ti	Tigrinya	Tigrinya	ትግርኛ	tigrinja,tigrigna,tigrinia
 mal	ml	Malayalam	Malayalam	മലയാളം
 
 # These have no ISO 639-1 code but are common enough in the Dutch labour market to be listed by name.
-srn		Sranantongo	Sranan Tongo	Sranan Tongo	sranan,surinaams,takitaki
-pap		Papiaments	Papiamento	Papiamentu	papiamentoe
+srn		Sranantongo	Sranan Tongo	Sranan Tongo	sranan,surinaams,takitaki,taki taki,negerengels
+pap		Papiaments	Papiamento	Papiamentu	papiamentoe,antilliaans,curacaos,arubaans
 hns		Sarnami	Caribbean Hindustani	Sarnaanie Hiendoestaanie	sarnami hindoestani,hindoestaans,hindostaans,surinaamshindoestaans,sarnamihindi,sarnami hindoestaans
 jvn		Surinaams-Javaans	Caribbean Javanese	Jawa Suriname	sranan javaans,surinaams javaans
 djk		Aukaans	Eastern Maroon Creole	Okanisi Tongo	ndyuka,okanisi,aucaans,businenge tongo,marrontaal
 srm		Saramaccaans	Saramaccan	Saamaka	saramakaans
-kea		Kaapverdiaans Creools	Kabuverdianu	kabuverdianu	kriolu,krioulo,kaapverdiaans,kaapverdisch
+kea		Kaapverdiaans Creools	Kabuverdianu	kabuverdianu	kriolu,krioulo,kaapverdiaans,kaapverdisch,cape verdean,cape verdean creole
 vic		Antilliaans-Engels creools	Virgin Islands Creole English		sintmaartens engels,sabaans engels,statiaans engels,caribisch engels
 ary		Marokkaans-Arabisch	Moroccan Arabic	الدارجة	darija,marokkaans arabisch,maghrebijns arabisch
-arz		Egyptisch-Arabisch	Egyptian Arabic	عامي	egyptisch arabisch,masri,masry
-apc		Levantijns Arabisch	Levantine Arabic	العامية	syrisch arabisch,libanees arabisch,palestijns arabisch,jordaans arabisch,shami
-acm		Iraaks-Arabisch	Mesopotamian Arabic	اللهجة العراقية	iraaks arabisch,mesopotamisch arabisch,iraaks
-apd		Soedanees-Arabisch	Sudanese Arabic	سوداني	soedanees arabisch,soedanees
-arq		Algerijns-Arabisch	Algerian Arabic	اللهجة الجزائرية	algerijnse darija,algerijns arabisch,dziria
-aeb		Tunesisch-Arabisch	Tunisian Arabic	تونسي	derja,tunesische darija,tunesisch arabisch,tunesisch
-arb		Modern Standaardarabisch	Standard Arabic	العربية	standaardarabisch,fusha,klassiek arabisch,schrijftaalarabisch
-zgh		Standaard Marokkaans Tamazight	Standard Moroccan Tamazight	ⵜⴰⵎⴰⵣⵉⵖⵜ	tamazight,amazigh,berbers,standaard tamazight
+arz		Egyptisch-Arabisch	Egyptian Arabic	عامي	egyptisch arabisch,masri,masry,egyptisch,egyptian
+apc		Levantijns Arabisch	Levantine Arabic	العامية	syrisch arabisch,libanees arabisch,palestijns arabisch,jordaans arabisch,shami,libanees,palestijns,jordaans,levantijns,syrian,lebanese,palestinian,levantine,syrian arabic,lebanese arabic,palestinian arabic
+acm		Iraaks-Arabisch	Mesopotamian Arabic	اللهجة العراقية	iraaks arabisch,mesopotamisch arabisch,iraaks,irakees,iraqi,iraqi arabic
+apd		Soedanees-Arabisch	Sudanese Arabic	سوداني	soedanees arabisch,soedanees,sudanese
+arq		Algerijns-Arabisch	Algerian Arabic	اللهجة الجزائرية	algerijnse darija,algerijns arabisch,dziria,algerijns,algerian
+aeb		Tunesisch-Arabisch	Tunisian Arabic	تونسي	derja,tunesische darija,tunesisch arabisch,tunesisch,tunisian
+arb		Modern Standaardarabisch	Standard Arabic	العربية	standaardarabisch,fusha,klassiek arabisch,schrijftaalarabisch,modern standard arabic,standaard arabisch,classical arabic
+zgh		Standaard Marokkaans Tamazight	Standard Moroccan Tamazight	ⵜⴰⵎⴰⵣⵉⵖⵜ	tamazight,amazigh,berbers,standaard tamazight,berber
 tzm		Midden-Atlas Tamazight	Central Atlas Tamazight	Tamaziɣt n laṭlaṣ	middenatlas berbers
-rif		Riffijns	Tarifit	Tarifit	rifberbers,riffijnsberbers,rifijns
-shi		Tasjelhit	Tachelhit	ⵜⴰⵛⵍⵃⵉⵜ	sjilha,shilha,soussi
-kab		Kabylisch	Kabyle	Taqbaylit	kabylischberbers
+rif		Riffijns	Tarifit	Tarifit	rifberbers,riffijnsberbers,rifijns,tarifiyt,riffiaans
+shi		Tasjelhit	Tachelhit	ⵜⴰⵛⵍⵃⵉⵜ	sjilha,shilha,soussi,tashelhit,tasjelhiet
+kab		Kabylisch	Kabyle	Taqbaylit	kabylischberbers,kabyliaans
 kmr		Koermanci	Northern Kurdish		kurmanji,kurmanci,koerdisch kurmanci,noordkoerdisch
 ckb		Sorani	Central Kurdish	کوردیی ناوەندی	centraalkoerdisch,koerdisch sorani
 sdh		Zuid-Koerdisch	Southern Kurdish	کوردی خوارگ	feyli,kelhuri,kermanshahi
 zza		Zazaki	Zaza	Zazakî	zazaisch,dimli,kirmanjki
 prs		Dari	Dari	دری	afghaans perzisch,dariperzisch,farsidari
 haz		Hazaragi	Hazaragi	آزرگی	hazara,hazaragiperzisch,hazaraki
-aii		Assyrisch	Assyrian Neo-Aramaic	ܐܬܘܪܝܐ	assyrischaramees,aramees,sureth,soerayt
-tru		Suryoyo	Turoyo	Surayt	syrischaramees
-cld		Chaldeeuws	Chaldean Neo-Aramaic		chaldeeuwsaramees,chaldeeuws neoaramees,kaldaya
+aii		Assyrisch	Assyrian Neo-Aramaic	ܐܬܘܪܝܐ	assyrischaramees,aramees,sureth,soerayt,aramaic,assyrian
+tru		Suryoyo	Turoyo	Surayt	syrischaramees,soeryoyo
+cld		Chaldeeuws	Chaldean Neo-Aramaic		chaldeeuwsaramees,chaldeeuws neoaramees,kaldaya,chaldean
 tig		Tigre	Tigre	ትግረ	xasa
 ymm		Maay Maay	Maay	Af-maay	rahanweyn
-pcm		Nigeriaans Pidgin	Nigerian Pidgin	Naijá	nigeriaans pidginengels,pidgin engels,broken english
+pcm		Nigeriaans Pidgin	Nigerian Pidgin	Naijá	nigeriaans pidginengels,pidgin engels,broken english,pidgin
 gpe		Ghanees Pidgin-Engels	Ghanaian Pidgin English		ghanees pidgin,ghanees engels
 gaa		Ga	Ga	Gã	gadangme
 fat		Fanti	Fanti	Mfantse	fante,fantse,akan fante
 lua		Tshiluba	Luba-Lulua	Ciluba	lubakasai
-cmn		Mandarijn	Mandarin Chinese	普通话	mandarijnchinees,standaardchinees,putonghua,chinees mandarijn
-yue		Kantonees	Yue Chinese	粵語	cantonees,kantonees chinees,chinees kantonees
-nan		Min Nan	Min Nan Chinese		hokkien,teochew,minnan,taiwanees
+cmn		Mandarijn	Mandarin Chinese	普通话	mandarijnchinees,standaardchinees,putonghua,chinees mandarijn,mandarin
+yue		Kantonees	Yue Chinese	粵語	cantonees,kantonees chinees,chinees kantonees,cantonese
+nan		Min Nan	Min Nan Chinese		hokkien,teochew,minnan,taiwanees,taiwanese
 wuu		Wu	Wu Chinese	Wu Nyu	wenzhounees,shanghainees,wuchinees
 hak		Hakka	Hakka Chinese		kejia,hakkachinees
 cdo		Min Dong	Min Dong Chinese		fuzhounees,foetsjouws,hokchew,mindong
@@ -127,10 +127,10 @@ kok		Konkani	Konkani (macrolanguage)	कोंकणी	konkanees,kokani
 pnb		Punjabi (Pakistaans)	Western Panjabi		pandzjabi,westers punjabi,lahnda
 abs		Moluks-Maleis	Ambonese Malay	Bahasa Malayu Ambon	ambonees,ambons maleis,moluks,melayu ambon
 dse		Nederlandse Gebarentaal	Dutch Sign Language		gebarentaal,doventaal
-rom		Romani	Romany	Romani	romanes,roma,sintiromanes
+rom		Romani	Romany	Romani	romanes,roma,sintiromanes,zigeunertaal,sinti
 crh		Krim-Tataars	Crimean Tatar	Къырымтатар тили
 abk	ab	Abchazisch	Abkhazian	Аԥсшәа
-orm	om	Afaan Oromo	Oromo	Oromoo	afaan
+orm	om	Afaan Oromo	Oromo	Oromoo	afaan,oromiffa,afan oromo,afaan oromoo
 aar	aa	Afar	Afar	Qafar
 aka	ak	Akan	Akan	Akan
 arg	an	Aragonees	Aragonese	aragonés
@@ -142,7 +142,7 @@ bam	bm	Bambara	Bambara	bamanakan
 bak	ba	Basjkiers	Bashkir	башҡорт теле
 eus	eu	Baskisch	Basque	euskara	baq
 bih	bh	Bihari	Bihari languages
-mya	my	Birmaans, Birmees	Burmese	မြန်မာ	birmaans,birmees,bur
+mya	my	Birmaans, Birmees	Burmese	မြန်မာ	birmaans,birmees,bur,myanmar
 bis	bi	Bislama	Bislama	Bislama
 nob	nb	Bokmål-Noors	Norwegian Bokmål	norsk bokmål	bokmal noors
 bre	br	Bretons	Breton	brezhoneg
@@ -155,14 +155,14 @@ dzo	dz	Dzongkha	Dzongkha	རྫོང་ཁ
 ewe	ee	Ewe	Ewe	Eʋegbe
 fao	fo	Faeröers	Faroese	føroyskt
 fij	fj	Fijisch	Fijian	Na Vosa Vakaviti
-ful	ff	Fula	Fulah	Pulaar
+ful	ff	Fula	Fulah	Pulaar	fulani,peul,peuls
 glg	gl	Galicisch	Galician	galego
 kat	ka	Georgisch	Georgian	ქართული	geo
 kik	ki	Gikuyu	Kikuyu	Gikuyu
 kal	kl	Groenlands	Kalaallisut	kalaallisut
 grn	gn	Guaraní	Guarani	avañe’ẽ
 hau	ha	Hausa	Hausa	Hausa
-hat	ht	Haïtiaans-Creools	Haitian	Kreyòl Ayisyen	haitiaans creools
+hat	ht	Haïtiaans-Creools	Haitian	Kreyòl Ayisyen	haitiaans creools,haitian creole,haitiaans
 her	hz	Herero	Herero	Otjiherero
 hmo	ho	Hiri Motu	Hiri Motu	Hiri Motu
 isl	is	IJslands	Icelandic	íslenska	ice
@@ -178,13 +178,13 @@ kau	kr	Kanuri	Kanuri	Kanuri
 kas	ks	Kasjmiri	Kashmiri	کٲشُر
 kaz	kk	Kazachs	Kazakh	қазақ тілі
 chu	cu	Kerkslavisch	Church Slavic	церковнослове́нскїй
-khm	km	Khmer, Cambodjaans	Khmer	ខ្មែរ	cambodjaans
-kin	rw	Kinyarwanda	Kinyarwanda	Kinyarwanda
-kir	ky	Kirgizisch	Kirghiz	кыргызча
+khm	km	Khmer, Cambodjaans	Khmer	ខ្មែរ	cambodjaans,cambodian
+kin	rw	Kinyarwanda	Kinyarwanda	Kinyarwanda	rwandees
+kir	ky	Kirgizisch	Kirghiz	кыргызча	kyrgyz
 run	rn	Kirundi	Rundi	Ikirundi
 kon	kg	Kongo	Kongo	Kikongo
 kua	kj	Kwanyama	Kuanyama	Oshikwanyama
-lao	lo	Laotiaans	Lao	ລາວ
+lao	lo	Laotiaans	Lao	ລາວ	laotian
 lin	ln	Lingala	Lingala	lingála
 lub	lu	Luba-Katanga	Luba-Katanga	Kiluba	luba katanga
 lug	lg	Luganda	Ganda	Luganda
@@ -197,14 +197,14 @@ mon	mn	Mongools	Mongolian	монгол
 nau	na	Nauruaans	Nauru	dorerin Naoero
 nav	nv	Navajo	Navajo	Diné Bizaad
 ndo	ng	Ndonga	Ndonga	Oshindonga
-nep	ne	Nepalees	Nepali (macrolanguage)	नेपाली
+nep	ne	Nepalees	Nepali (macrolanguage)	नेपाली	nepali
 nde	nd	Noord-Ndebele	North Ndebele	isiNdebele	noord ndebele
 sme	se	Noord-Samisch (Noord-Laps)	Northern Sami	davvisámegiella	noordsamisch,noord samisch,noordlaps,noord laps
-nya	ny	Nyanja	Chichewa	Nyanja
+nya	ny	Nyanja	Chichewa	Nyanja	chewa
 nno	nn	Nynorsk (Nieuw-Noors)	Norwegian Nynorsk	nynorsk	nieuwnoors,nieuw noors
 oci	oc	Occitaans	Occitan (post 1500)	occitan
 ori	or	Odia (Oriya)	Oriya (macrolanguage)	ଓଡ଼ିଆ	odia,oriya
-uig	ug	Oeigoers	Uighur	ئۇيغۇرچە
+uig	ug	Oeigoers	Uighur	ئۇيغۇرچە	uyghur
 uzb	uz	Oezbeeks	Uzbek	o‘zbek
 oji	oj	Ojibweg	Ojibwa	Jibwemwin
 oss	os	Ossetisch	Iron Ossetic	ирон
@@ -219,7 +219,7 @@ srd	sc	Sardijns	Sardinian	sardu
 gla	gd	Schots-Gaelisch	Scottish Gaelic	Gàidhlig	schots gaelisch
 sna	sn	Shona	Shona	chiShona
 snd	sd	Sindhi	Sindhi	سنڌي
-sin	si	Singalees	Sinhala	සිංහල
+sin	si	Singalees	Sinhala	සිංහල	sinhalese,singhalees
 sun	su	Soendanees	Sundanese	Basa Sunda
 ssw	ss	Swazi	Swati	siSwati
 tgk	tg	Tadzjieks	Tajik	тоҷикӣ
@@ -237,7 +237,7 @@ ven	ve	Venda	Venda	Tshivenḓa
 vol	vo	Volapük, Volapuk	Volapük	Volapük
 wln	wa	Waals	Walloon	walon
 cym	cy	Welsh	Welsh	Cymraeg	wel
-bel	be	Wit-Russisch (Belarussisch)	Belarusian	беларуская	witrussisch,wit russisch,belarussisch
+bel	be	Wit-Russisch (Belarussisch)	Belarusian	беларуская	witrussisch,wit russisch,belarussisch,belarussian,byelorussian,belarusisch
 wol	wo	Wolof	Wolof	Wolof
 xho	xh	Xhosa	Xhosa	IsiXhosa
 iii	ii	Yi	Sichuan Yi	ꆈꌠꉙ	yi talen,nuosu
