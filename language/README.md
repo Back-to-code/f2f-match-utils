@@ -12,8 +12,8 @@ code, ok := language.Parse("nl")                      // nld, the ISO 639-1 code
 name := language.SupportedLanguages[code]             // the Dutch name, if it has one
 ```
 
-The list covers all of ISO 639-3: **7,928 languages**, reachable under **18,514 names**. Only
-**244** carry a Dutch name, which is what marks a language as supported, and **185** have an
+The list covers all of ISO 639-3: **7,928 languages**, reachable under **18,515 names**. Only
+**237** carry a Dutch name, which is what marks a language as supported, and **185** have an
 ISO 639-1 code.
 
 ## The three files
@@ -58,19 +58,19 @@ parse 18,514 string literals.
 
 A language name is only ever *matched against*. Nothing reads "Zuojiang Zhuang" back out
 of the table and shows it to anyone — anything that needs a name to display reads
-`SupportedLanguages`, the 244 Dutch names, which are kept as real strings, and nothing else.
+`SupportedLanguages`, the 237 Dutch names, which are kept as real strings, and nothing else.
 So the table stores what a name hashes to, not the name:
 
 ```
-nameHashes  [18514]uint32   FNV-1a of the normalized name, sorted ascending
-nameCodes   [18514]uint16   the packed code that hash resolves to
+nameHashes  [18515]uint32   FNV-1a of the normalized name, sorted ascending
+nameCodes   [18515]uint16   the packed code that hash resolves to
 ```
 
 A lookup normalizes the input, hashes it, and binary searches. Both arrays are plain
 numbers, so they live in the binary as static data: no pointers for the collector to walk,
 no `init` to build them, no heap.
 
-**Collisions.** 32 bits over 18,514 names is comfortable — the expected number of
+**Collisions.** 32 bits over 18,515 names is comfortable — the expected number of
 collisions is about 0.04 — and there are none today. That is not left to chance: the
 generator refuses to write a table with a collision in it and prints both names, and
 `TestNoHashCollisions` asserts the same. If a new language ever collides, rename or drop

@@ -8,7 +8,7 @@
 # Regenerate tables_gen.go after editing: go generate ./language/...
 
 # The languages seen most often in practice, most frequent first.
-nld	nl	Nederlands	Dutch	Nederlands	dut
+nld	nl	Nederlands	Dutch	Nederlands	dut,nedersaksisch,nedersaksies,nederduits,platduits,low german,drents,dreents,drenths,gronings,grunnegs,grunnings,twents,tweants,zeeuws,westvlaams,westvlams,vlaams,limburgs,limburgan,lemburgs,achterhoeks,achterhooks,sallands,stellingwerfs,stellingwarfs,veluws
 eng	en	Engels	English	English
 deu	de	Duits	German	Deutsch	ger
 fra	fr	Frans	French	français	fre
@@ -46,7 +46,6 @@ kor	ko	Koreaans	Korean	한국어
 heb	he	Hebreeuws	Hebrew	עברית
 tam	ta	Tamil	Tamil	தமிழ்
 fin	fi	Fins	Finnish	suomi
-lim	li	Limburgs	Limburgan	Lèmburgs
 tha	th	Thai	Thai	ไทย
 est	et	Estisch	Estonian	eesti
 afr	af	Afrikaans	Afrikaans	Afrikaans
@@ -91,7 +90,7 @@ apc		Levantijns Arabisch	Levantine Arabic	العامية	syrisch arabisch,libane
 acm		Iraaks-Arabisch	Mesopotamian Arabic	اللهجة العراقية	iraaks arabisch,mesopotamisch arabisch,iraaks
 apd		Soedanees-Arabisch	Sudanese Arabic	سوداني	soedanees arabisch,soedanees
 arq		Algerijns-Arabisch	Algerian Arabic	اللهجة الجزائرية	algerijnse darija,algerijns arabisch,dziria
-aeb		Tunesisch-Arabisch	Tunisian Arabic	تونسي	derja,tunesische darija,tunesisch arabisch
+aeb		Tunesisch-Arabisch	Tunisian Arabic	تونسي	derja,tunesische darija,tunesisch arabisch,tunesisch
 arb		Modern Standaardarabisch	Standard Arabic	العربية	standaardarabisch,fusha,klassiek arabisch,schrijftaalarabisch
 zgh		Standaard Marokkaans Tamazight	Standard Moroccan Tamazight	ⵜⴰⵎⴰⵣⵉⵖⵜ	tamazight,amazigh,berbers,standaard tamazight
 tzm		Midden-Atlas Tamazight	Central Atlas Tamazight	Tamaziɣt n laṭlaṣ	middenatlas berbers
@@ -127,12 +126,6 @@ bho		Bhojpuri	Bhojpuri	भोजपुरी	bhojpoeri
 kok		Konkani	Konkani (macrolanguage)	कोंकणी	konkanees,kokani
 pnb		Punjabi (Pakistaans)	Western Panjabi		pandzjabi,westers punjabi,lahnda
 abs		Moluks-Maleis	Ambonese Malay	Bahasa Malayu Ambon	ambonees,ambons maleis,moluks,melayu ambon
-nds		Nedersaksisch	Low German	Neddersass’sch	nederduits,platduits,nedersaksies
-drt		Drents	Drents	Drèents	drenths
-gos		Gronings	Gronings	Grunnegs	grunnings
-twd		Twents	Twents	Twents	tweants
-zea		Zeeuws	Zeeuws	Zeêuws
-vls		West-Vlaams	Vlaams	West-Vlams
 dse		Nederlandse Gebarentaal	Dutch Sign Language		gebarentaal,doventaal
 rom		Romani	Romany	Romani	romanes,roma,sintiromanes
 crh		Krim-Tataars	Crimean Tatar	Къырымтатар тили
@@ -1889,6 +1882,7 @@ drn			West Damar
 dro			Daro-Matu Melanau
 drq			Dura
 drs			Gedeo	ጌዴኡፈ
+drt			Drents	Drèents
 dru			Rukai
 dry			Darai	दरइ
 dsb			Lower Sorbian	dolnoserbšćina
@@ -2387,6 +2381,7 @@ goo			Gone Dau
 gop			Yeretuar
 goq			Gorap
 gor			Gorontalo	Hulontalo
+gos			Gronings	Grunnegs
 got			Gothic
 gou			Gavar	Ma Gavar
 gov			Goo
@@ -3740,6 +3735,7 @@ lih			Lihir	Lihir
 lij			Ligurian	ligure
 lik			Lika	Liliko
 lil			Lillooet
+lim	li		Limburgan	Lèmburgs
 lio			Liki
 lip			Sekpele	Sɛkpɛlé
 liq			Libido	Libido
@@ -4650,6 +4646,7 @@ ndn			Ngundi
 ndp			Ndo
 ndq			Ndombe
 ndr			Ndoola
+nds			Low German	Neddersass’sch
 ndt			Ndunga
 ndu			Dugun
 ndv			Ndut	Ndút
@@ -6710,6 +6707,7 @@ tvy			Timor Pidgin
 twa			Twana
 twb			Western Tawbuid
 twc			Teshenawa
+twd			Twents	Twents
 twe			Tewa (Indonesia)
 twf			Northern Tiwa
 twg			Tereweng
@@ -6946,6 +6944,7 @@ vkt			Tenggarong Kutai Malay
 vku			Kurrama
 vkz			Koro Zuba
 vlp			Valpei
+vls			Vlaams	West-Vlams
 vma			Martuyhunira
 vmb			Barbaram
 vmc			Juxtlahuaca Mixtec
@@ -7795,6 +7794,7 @@ zca			Coatecas Altas Zapotec	Diꞌzhzë
 zcd			Las Delicias Zapotec
 zch			Central Hongshuihe Zhuang
 zdj			Ngazidja Comorian	Shingazidja
+zea			Zeeuws	Zeêuws
 zeg			Zenag
 zeh			Eastern Hongshuihe Zhuang
 zem			Zeem

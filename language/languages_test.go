@@ -227,6 +227,16 @@ func TestParse(t *testing.T) {
 		{"Kurmanji", CodeOf("kmr")},
 		{"Nederlandse Gebarentaal", CodeOf("dse")},
 
+		// The Dutch regional languages are offered as Dutch, Frisian excepted. Their
+		// codes still name their own ISO language, since a code always wins.
+		{"Twents", CodeOf("nld")},
+		{"Nedersaksisch", CodeOf("nld")},
+		{"Limburgs", CodeOf("nld")},
+		{"West-Vlaams", CodeOf("nld")},
+		{"twd", CodeOf("twd")},
+		{"li", CodeOf("lim")},
+		{"Fries", CodeOf("fry")},
+
 		// "mei" is the Dutch month but also the ISO 639-3 code of Midob, and a code
 		// always wins. Language fields do hold bare codes, "nl" among them.
 		{"mei", CodeOf("mei")},
