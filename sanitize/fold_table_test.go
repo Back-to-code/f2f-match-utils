@@ -1,11 +1,11 @@
-package rules
+package sanitize
 
 import (
 	"bytes"
 	"os"
 	"testing"
 
-	"github.com/Back-to-code/f2f-match-utils/rules/internal/foldtable"
+	"github.com/Back-to-code/f2f-match-utils/sanitize/internal/foldtable"
 )
 
 func TestFoldTableIsUpToDate(t *testing.T) {
@@ -26,7 +26,7 @@ func TestFoldTableIsUpToDate(t *testing.T) {
 		t.Fatal(err)
 	}
 	if !bytes.Equal(expected, actual) {
-		t.Errorf("%s is out of date, run: go generate ./rules/...", foldtable.OutputFile)
+		t.Errorf("%s is out of date, run: go generate ./sanitize/...", foldtable.OutputFile)
 	}
 }
 

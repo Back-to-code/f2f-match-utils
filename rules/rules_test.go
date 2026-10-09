@@ -48,10 +48,6 @@ func TestWords(t *testing.T) {
 			t.Errorf("%q: got %v, want %v", text, got, sorted(expected))
 		}
 	}
-	got := SplitWords("R&D / QA (senior), 2e lijns")
-	if !slices.Equal(got, []string{"r", "d", "qa", "senior", "2e", "lijns"}) {
-		t.Errorf("split: %v", got)
-	}
 }
 
 func TestNormalizerRealWords(t *testing.T) {

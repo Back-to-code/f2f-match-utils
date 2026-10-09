@@ -34,9 +34,11 @@ matches the text and none of its excludes does.
 
 ### Normalisation
 
-Texts and the words in rules are normalised the same way:
+Texts and the words in rules are normalised the same way, by the fold of the [`sanitize`](../sanitize)
+package:
 
-1. Lowercase and remove diacritics: `é` → `e`, `ë` → `e`, `ß` → `ss`, `ø` → `o`, `æ` → `ae`, `œ` → `oe`, `ł` → `l`.
+1. Lowercase and remove diacritics: `é` → `e`, `ë` → `e`, `ß` → `ss`, `ø` → `o`, `æ` → `ae`, `œ` → `oe`, `ł` → `l`,
+   `đ` → `d`, `ð` → `d`, `ħ` → `h`, `þ` → `th`.
 2. Drop `.` and apostrophes (`'`, `’`, `‘`, `` ` ``, `´`): `o.a.` → `oa`, `it's` → `its`.
 3. Every other character that is not `a-z0-9` separates words.
 4. **Joined pairs**: every two adjacent words are also added as one word. `magazijn medewerker` and
@@ -194,11 +196,4 @@ background, so neither writes nor matches wait for them. `Compact` merges everyt
 
 ## The fold table
 
-`fold_table.go` maps every non-ASCII code point to what it folds to. It is generated from the Unicode
-tables of the Go toolchain:
-
-```sh
-go generate ./rules/...
-```
-
-`TestFoldTableIsUpToDate` regenerates it when the toolchain has the same Unicode version as the table.
+The fold table lives in the [`sanitize`](../sanitize#the-fold-table) package.

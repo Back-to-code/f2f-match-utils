@@ -6,6 +6,8 @@ import (
 	"slices"
 	"strings"
 	"unicode"
+
+	"github.com/Back-to-code/f2f-match-utils/sanitize"
 )
 
 const (
@@ -445,7 +447,7 @@ func checkLiterals(node *Node, left, right bool, errs []string) []string {
 		return errs
 	}
 	source := node.literalSource()
-	text := Fold(node.Raw)
+	text := sanitize.Fold(node.Raw)
 	var bad []string
 	for _, r := range text {
 		if r > unicode.MaxASCII || !isWordByte(byte(r)) {

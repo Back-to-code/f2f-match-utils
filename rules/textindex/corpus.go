@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/Back-to-code/f2f-match-utils/rules"
+	"github.com/Back-to-code/f2f-match-utils/sanitize"
 )
 
 // noText marks an entry whose text has no words, which no rule can match.
@@ -88,14 +89,13 @@ func gram4(text string) uint32 {
 }
 
 func (c *corpus) attach(raw string, by owner) uint32 {
-	sequence := rules.SplitWords(raw)
-	key := strings.Join(sequence, " ")
+	key := sanitize.WordKey(raw)
 	if key == "" {
 		return noText
 	}
 	textID, ok := c.textOf[key]
 	if !ok {
-		return c.addText(key, raw, sequence, by)
+		return c.addText(key, raw, by)
 	}
 	c.texts[textID].more = append(c.texts[textID].more, by)
 	return textID
@@ -120,7 +120,7 @@ func (c *corpus) detach(textID uint32, by owner) {
 	}
 }
 
-func (c *corpus) addText(key, raw string, sequence []string, by owner) uint32 {
+func (c *corpus) addText(key, raw string, by owner) uint32 {
 	var textID uint32
 	if count := len(c.freeTexts); count > 0 {
 		textID = c.freeTexts[count-1]
@@ -139,6 +139,7 @@ func (c *corpus) addText(key, raw string, sequence []string, by owner) uint32 {
 			c.rights[ids[idx]] = 0
 		}
 	}
+	sequence := strings.Split(key, " ")
 	for idx := 1; idx < len(sequence); idx++ {
 		left, right := sequence[idx-1], sequence[idx]
 		pair := ids[slices.Index(words, left+right)]

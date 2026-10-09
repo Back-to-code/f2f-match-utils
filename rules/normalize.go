@@ -1,63 +1,13 @@
 package rules
 
 import (
-	"sort"
 	"strings"
-	"unicode/utf8"
-)
 
-// foldRune reports what one non-ASCII rune becomes when folded: word characters (mapped), nothing
-// (vanish, e.g. combining marks and typographic apostrophes), or a word separator.
-func foldRune(r rune) (out string, vanish bool, mapped bool) {
-	text, ok := foldMapped[r]
-	if ok {
-		return text, false, true
-	}
-	idx := sort.Search(len(foldVanishRanges), func(idx int) bool { return foldVanishRanges[idx][1] >= r })
-	if idx < len(foldVanishRanges) && foldVanishRanges[idx][0] <= r {
-		return "", true, false
-	}
-	return "", false, false
-}
+	"github.com/Back-to-code/f2f-match-utils/sanitize"
+)
 
 func isWordByte(ch byte) bool {
 	return ('a' <= ch && ch <= 'z') || ('0' <= ch && ch <= '9')
-}
-
-func isDroppedASCII(ch byte) bool {
-	return ch == '.' || ch == '\'' || ch == '`'
-}
-
-// Fold lowercases text, removes diacritics (é → e, ß → ss, ø → o) and drops '.' and apostrophes.
-// Everything else is kept, so a folded word is valid in a rule exactly when it is all a-z0-9.
-func Fold(text string) string {
-	var builder strings.Builder
-	builder.Grow(len(text))
-	for idx := 0; idx < len(text); {
-		ch := text[idx]
-		if ch < utf8.RuneSelf {
-			idx++
-			if isDroppedASCII(ch) {
-				continue
-			}
-			if 'A' <= ch && ch <= 'Z' {
-				ch += 'a' - 'A'
-			}
-			builder.WriteByte(ch)
-			continue
-		}
-		r, size := utf8.DecodeRuneInString(text[idx:])
-		idx += size
-		out, vanish, mapped := foldRune(r)
-		switch {
-		case mapped:
-			builder.WriteString(out)
-		case vanish:
-		default:
-			builder.WriteRune(r)
-		}
-	}
-	return builder.String()
 }
 
 // Normalizer turns texts into word sets. It reuses its buffers between calls, so it is not safe for
@@ -70,75 +20,17 @@ type Normalizer struct {
 	RealWords int
 }
 
-// SplitWords returns the folded words of text in order: runs of a-z0-9 after Fold.
-func SplitWords(text string) []string {
-	var normalizer Normalizer
-	normalizer.split(text)
-	joined := string(normalizer.buf)
-	words := make([]string, 0, len(normalizer.spans)/2)
-	for idx := range len(normalizer.spans) / 2 {
-		words = append(words, joined[normalizer.spans[2*idx]:normalizer.spans[2*idx+1]])
-	}
-	return words
-}
-
-// Words returns the word set a rule is matched against: the words of SplitWords plus every two
+// Words returns the word set a rule is matched against: the words of sanitize.SplitWords plus every two
 // adjacent words joined into one, without duplicates, real words first.
 func Words(text string) []string {
 	var normalizer Normalizer
 	return append([]string(nil), normalizer.Words(text)...)
 }
 
-func (n *Normalizer) split(text string) {
-	n.buf = n.buf[:0]
-	n.spans = n.spans[:0]
-	start := -1
-	closeWord := func() {
-		if start >= 0 {
-			n.spans = append(n.spans, start, len(n.buf))
-			start = -1
-		}
-	}
-	for idx := 0; idx < len(text); {
-		ch := text[idx]
-		if ch < utf8.RuneSelf {
-			idx++
-			if 'A' <= ch && ch <= 'Z' {
-				ch += 'a' - 'A'
-			}
-			if isWordByte(ch) {
-				if start < 0 {
-					start = len(n.buf)
-				}
-				n.buf = append(n.buf, ch)
-				continue
-			}
-			if !isDroppedASCII(ch) {
-				closeWord()
-			}
-			continue
-		}
-		r, size := utf8.DecodeRuneInString(text[idx:])
-		idx += size
-		out, vanish, mapped := foldRune(r)
-		switch {
-		case mapped:
-			if start < 0 {
-				start = len(n.buf)
-			}
-			n.buf = append(n.buf, out...)
-		case vanish:
-		default:
-			closeWord()
-		}
-	}
-	closeWord()
-}
-
 // Words is the package level Words without the copy: the returned slice is only valid until the next
 // call, the strings in it stay valid.
 func (n *Normalizer) Words(text string) []string {
-	n.split(text)
+	n.buf, n.spans = sanitize.AppendWords(n.buf[:0], n.spans[:0], text)
 	realEnd := len(n.buf)
 	pairs := len(n.spans)/2 - 1
 	for idx := range max(pairs, 0) {

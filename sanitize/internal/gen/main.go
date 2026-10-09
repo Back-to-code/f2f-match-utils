@@ -1,4 +1,4 @@
-// Command gen regenerates fold_table.go. Run it through "go generate ./rules/..." so it gets the rules
+// Command gen regenerates fold_table.go. Run it through "go generate ./sanitize/..." so it gets the sanitize
 // package directory as its working directory.
 package main
 
@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Back-to-code/f2f-match-utils/rules/internal/foldtable"
+	"github.com/Back-to-code/f2f-match-utils/sanitize/internal/foldtable"
 )
 
 func main() {
