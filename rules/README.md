@@ -111,6 +111,33 @@ set.Match("magazijnmanager")      // -1
 `Compile` always returns a usable set: an invalid entry is left out, and every index keeps pointing
 into the original lists, so stored attributions stay right.
 
+### Redundant includes
+
+`Set.PruneIncludes` blanks the includes whose matches the other includes already have, and leaves out
+the alternatives of an include that only bring such matches. The set matches the same texts afterwards.
+
+```go
+set := rules.Set{Includes: []string{"*bouw*", "bouw+techniek", "(bouw|installatie)+techniek"}}
+pruned, changed := set.PruneIncludes()
+// pruned.Includes: ["*bouw*", "", "installatie+techniek"], changed: 2
+```
+
+- An include is covered when one of its positive terms is. A pattern is covered when every word it
+  matches is matched by a pattern of another include: `*x*` covers every pattern containing `x`, `x*`
+  exact and prefix patterns starting with `x`, `*x` exact and suffix patterns ending in `x`. A literal is
+  covered when all its `~` forms are, a group when all its options are, and a compound when its joined
+  forms and one of its parts are, or when another include is that same compound.
+- Only includes of one term cover others: a second term or a `-` term narrows a rule, so none of its
+  patterns makes it match on its own.
+- An option of a group inside a compound goes only when the compound with that option is covered as a
+  whole: against `bouw*`, `techniek+(bouw|installatie)` stays, since `techniekbouw` does not start with
+  `bouw`.
+- Of includes that match the same texts the first stays. Indexes keep pointing into the original
+  lists, as with `Compile`; `Clean` drops the blanks.
+
+It reads the rules alone, never texts, so it only prunes what it can prove: an include stays when it
+takes several others together to cover it.
+
 ### Many texts: `textindex`
 
 Texts are stored under an ID of any comparable type, a few per ID if that fits (one ID per person, with
@@ -161,9 +188,10 @@ of the texts.
 | `textindex.Set`, replace the 3 texts of an ID | 1M texts | 24 µs | | |
 | `ruleindex.Match`, one text | 1M rules (20k sets) | 22 µs | 390 MB | 2.3 s |
 | `ruleindex.Set`, replace a set of 50 includes | 1M rules | 0.7 ms | | |
+| `Set.PruneIncludes`, 71 of 150 includes pruned | 150 rules | 0.3 ms | | |
 
 ```sh
-go test -run '^$' -bench . -benchmem ./rules/textindex ./rules/ruleindex
+go test -run '^$' -bench . -benchmem ./rules ./rules/textindex ./rules/ruleindex
 ```
 
 ## How the indexes work

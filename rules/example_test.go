@@ -22,6 +22,14 @@ func ExampleCompile() {
 	// -1
 }
 
+func ExampleSet_PruneIncludes() {
+	set := rules.Set{Includes: []string{"*bouw*", "bouw+techniek", "(bouw|installatie)+techniek"}}
+	pruned, changed := set.PruneIncludes()
+	fmt.Printf("%q %d\n", pruned.Includes, changed)
+	// Output:
+	// ["*bouw*" "" "installatie+techniek"] 2
+}
+
 func ExampleWords() {
 	fmt.Println(rules.Words("Magazijn-medewerker (o.a. heftruck)"))
 	// Output:

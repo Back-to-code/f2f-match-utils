@@ -564,12 +564,19 @@ func prepare(node *Node) {
 	for _, child := range node.Children {
 		prepare(child)
 	}
-	if node.Type != CompoundNode {
-		return
+	if node.Type == CompoundNode {
+		node.Forms, node.Patterns = joinedForms(node)
 	}
+}
+
+// joinedForms needs the forms of the compound's literals, which checkLiterals fills in; it changes
+// nothing.
+func joinedForms(compound *Node) ([]Form, []Pattern) {
+	var forms []Form
+	var patterns []Pattern
 	seenForms := map[Form]bool{}
 	seenPatterns := map[Pattern]bool{}
-	for _, combo := range combinations(node) {
+	for _, combo := range combinations(compound) {
 		var text strings.Builder
 		for _, form := range combo {
 			text.WriteString(form.Text)
@@ -580,14 +587,15 @@ func prepare(node *Node) {
 			continue
 		}
 		seenForms[form] = true
-		node.Forms = append(node.Forms, form)
+		forms = append(forms, form)
 		for _, pattern := range form.Patterns() {
 			if !seenPatterns[pattern] {
 				seenPatterns[pattern] = true
-				node.Patterns = append(node.Patterns, pattern)
+				patterns = append(patterns, pattern)
 			}
 		}
 	}
+	return forms, patterns
 }
 
 // isSpace is unicode.IsSpace plus the ASCII information separators, as in the syntax's first
