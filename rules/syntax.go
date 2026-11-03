@@ -661,7 +661,8 @@ func splitTerms(rule string) ([]string, []string) {
 	}
 	var terms []string
 	var current strings.Builder
-	for _, ch := range rule {
+	runes := []rune(rule)
+	for idx, ch := range runes {
 		switch ch {
 		case '(':
 			depth++
@@ -672,7 +673,7 @@ func splitTerms(rule string) ([]string, []string) {
 		case !isSpace(ch):
 			current.WriteRune(ch)
 		case depth != 0:
-			return nil, []string{"no spaces inside ( ): write (a|b), not (a | b)"}
+			return nil, []string{spaceInGroupMessage(runes, idx)}
 		case current.Len() > 0:
 			terms = append(terms, current.String())
 			current.Reset()
@@ -682,6 +683,28 @@ func splitTerms(rule string) ([]string, []string) {
 		terms = append(terms, current.String())
 	}
 	return terms, nil
+}
+
+// A space between two words inside a group is an AND term the writer meant to keep there, which needs
+// another fix than a stray space next to ( ) | or +.
+func spaceInGroupMessage(runes []rune, at int) string {
+	start := at
+	for start > 0 && !strings.ContainsRune("(|+", runes[start-1]) && !isSpace(runes[start-1]) {
+		start--
+	}
+	next := at
+	for next < len(runes) && isSpace(runes[next]) {
+		next++
+	}
+	end := next
+	for end < len(runes) && !strings.ContainsRune(")|+", runes[end]) && !isSpace(runes[end]) {
+		end++
+	}
+	if start == at || end == next {
+		return "no spaces inside ( ): write (a|b), not (a | b)"
+	}
+	return fmt.Sprintf("'%s %s': a space inside ( ) starts an AND term, which a group can't hold; put the term after the group, as in (a|b) c, or write it as a rule of its own",
+		string(runes[start:at]), string(runes[next:end]))
 }
 
 // ParseRule parses one rule. On failure the error is a *SyntaxError that lists every problem found,

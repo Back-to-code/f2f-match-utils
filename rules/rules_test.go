@@ -73,6 +73,17 @@ func TestInflections(t *testing.T) {
 	if !slices.Contains(Inflections("commercieel"), "commerciele") || !slices.Contains(Inflections("groot"), "grote") {
 		t.Error("doubled vowel")
 	}
+	for word, form := range map[string]string{
+		"cardioloog": "cardiologen", "kraan": "kranen",
+		"vakkenvuller": "vakkenvulster", "kapper": "kapster", "inpakker": "inpaksters",
+		"beheerder": "beheerster", "uitvoerder": "uitvoersters", "begeleider": "begeleidster",
+		"verkoper": "verkoopster", "schoonmaker": "schoonmaakster", "verpleger": "verpleegster",
+		"beveiliger": "beveiligster", "verzorger": "verzorgster",
+	} {
+		if forms := Inflections(word); !slices.Contains(forms, form) {
+			t.Errorf("%s: want %s in %v", word, form, forms)
+		}
+	}
 }
 
 func TestLiterals(t *testing.T) {
@@ -84,6 +95,8 @@ func TestLiterals(t *testing.T) {
 		{"medewerker~", "medewerksters"}, {"medewerker~", "medewerkeren"},
 		{"chauffeur~", "chauffeuse"}, {"commercieel~", "commerciële binnendienst"},
 		{"verkoper~|verkoopster", "verkoopster"}, {"verkoper~|verkoopster", "verkopers"},
+		{"verkoper~", "verkoopster"}, {"vakkenvuller~", "vakkenvulster"}, {"beheerder~", "beheerster"},
+		{"cardioloog~", "cardiologen"}, {"(applicatie|functioneel)+beheerder~", "functioneel beheerster"},
 		{"*monteur~", "automonteurs"}, {"*monteur~", "monteur"},
 		{"Coördinator", "coordinator"}, {"coordinator", "Coördinator"}, {"o.a.", "medewerker o.a. planning"},
 		{"it's", "It’s"},
@@ -181,7 +194,9 @@ func TestValidation(t *testing.T) {
 		"-medewerker": "at least one term without '-'", "-medewerker -magazijn*": "at least one term without '-'",
 		"--medewerker": "only one leading '-'", "(magazijn|warehouse+medewerker": "unbalanced", "magazijn)": "unbalanced",
 		"(a))(b": "unbalanced", "e-commerce": "'-' is only allowed at the start", "c#": "letters and digits",
-		"(a | b)": "no spaces inside", "a | b": "no spaces around", "a(b)": "joined to the group", "(a)(b)": "joined to its neighbour",
+		"(a | b)": "no spaces inside", "( a|b)": "no spaces inside", "(a|b )": "no spaces inside", "a | b": "no spaces around",
+		"(monteur~|medewerker~ td)": "'medewerker~ td': a space inside ( ) starts an AND term", "a(b)": "joined to the group",
+		"(a)(b)": "joined to its neighbour",
 		strings.Join([]string{group, group, group, group}, "+"): "limit",
 	}
 	for rule, fragment := range invalid {

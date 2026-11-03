@@ -70,9 +70,11 @@ literal  := ['*'] letters ['*'] | ['*'] letters '~'
 | `-term` | (in a rule) must not match any word | `medewerker~ -hoofd*` |
 
 - `~` stands for the word plus `s`, `e`, `en`, `es` and `n`; a word ending in `er` also takes `ster` and
-  `sters` (medewerker → medewerkster), one ending in `eur` also `euse` (chauffeur → chauffeuse), one
-  ending in a doubled vowel and a consonant also the single vowel plus `e` (commercieel → commerciele).
-  `rules.Inflections` lists them. Irregular forms are written as alternatives.
+  `sters` on its verb stem (medewerker → medewerkster, vakkenvuller → vakkenvulster, beheerder →
+  beheerster, verkoper → verkoopster), one ending in `eur` also `euse` (chauffeur → chauffeuse), one
+  ending in a doubled vowel and a consonant also the single vowel plus `e` and `en` (commercieel →
+  commerciele, cardioloog → cardiologen). `rules.Inflections` lists them. Irregular forms are written as
+  alternatives.
 - `+` binds tighter than `|`: `a|b+c` is `a` or `b+c`. Parts may be groups: `(magazijn|warehouse)+medewerker~`.
 - Wildcards sit on the outer ends of a term: a leading `*` on the first part of a compound, a trailing
   `*` or `~` on the last part. They attach to words, never to groups.
