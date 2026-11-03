@@ -64,23 +64,48 @@ func appendUnique(words []string, word string) []string {
 
 const vowels = "aeiou"
 
+func isVowel(ch byte) bool {
+	return strings.IndexByte(vowels, ch) >= 0
+}
+
 func isConsonant(ch byte) bool {
-	return 'a' <= ch && ch <= 'z' && strings.IndexByte(vowels, ch) < 0
+	return 'a' <= ch && ch <= 'z' && !isVowel(ch)
+}
+
+// sterStem respells the stem of an -er word for its -ster form, as the verb stem it comes from:
+// vuller → vul, beheerder → beheer, verkoper → verkoop. Begeleider keeps its d, the d of beheerder only
+// sits between r and er.
+func sterStem(stem string) string {
+	size := len(stem)
+	if size < 3 {
+		return stem
+	}
+	last, beforeLast := stem[size-1], stem[size-2]
+	switch {
+	case last == 'd' && beforeLast == 'r':
+		return stem[:size-1]
+	case last == beforeLast && isConsonant(last):
+		return stem[:size-1]
+	case isConsonant(last) && strings.IndexByte("aeou", beforeLast) >= 0 && isConsonant(stem[size-3]):
+		return stem[:size-1] + stem[size-2:]
+	}
+	return stem
 }
 
 // Inflections returns the forms `word~` stands for, word itself first.
 func Inflections(word string) []string {
 	forms := []string{word, word + "s", word + "e", word + "en", word + "es", word + "n"}
 	if strings.HasSuffix(word, "er") {
-		stem := word[:len(word)-2]
+		stem := sterStem(word[:len(word)-2])
 		forms = append(forms, stem+"ster", stem+"sters")
 	}
 	if strings.HasSuffix(word, "eur") {
 		forms = append(forms, word[:len(word)-3]+"euse")
 	}
 	size := len(word)
-	if size >= 3 && word[size-3] == word[size-2] && strings.IndexByte(vowels, word[size-2]) >= 0 && isConsonant(word[size-1]) {
-		forms = append(forms, word[:size-2]+word[size-1:]+"e")
+	if size >= 3 && word[size-3] == word[size-2] && isVowel(word[size-2]) && isConsonant(word[size-1]) {
+		single := word[:size-2] + word[size-1:]
+		forms = append(forms, single+"e", single+"en")
 	}
 	unique := forms[:0]
 	for _, form := range forms {
