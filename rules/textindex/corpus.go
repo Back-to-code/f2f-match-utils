@@ -246,6 +246,21 @@ func (c *corpus) compact(gram uint32, listing bucket) {
 	c.infixes[gram] = bucket{words: kept}
 }
 
+func (c *corpus) trim() {
+	for id := range c.postings {
+		c.postings[id] = trimmed(c.postings[id])
+	}
+	for idx := range c.texts {
+		c.texts[idx].more = trimmed(c.texts[idx].more)
+	}
+	for gram, listing := range c.infixes {
+		if cap(listing.words) > len(listing.words) {
+			listing.words = trimmed(listing.words)
+			c.infixes[gram] = listing
+		}
+	}
+}
+
 // forEachGram calls fn with each distinct gram in the word once.
 func (c *corpus) forEachGram(word string, fn func(gram uint32)) {
 	var buf [32]uint32

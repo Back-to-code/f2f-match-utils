@@ -1,6 +1,7 @@
 package tokens
 
 import (
+	"slices"
 	"sync"
 	"testing"
 )
@@ -101,6 +102,20 @@ func TestToTokensUsesCache(t *testing.T) {
 		if tokens1[0][i] != tokens2[0][i] {
 			t.Fatalf("Token mismatch at index %d", i)
 		}
+	}
+}
+
+func TestToTokensUncachedSharesTokensWithoutCaching(t *testing.T) {
+	resetState()
+
+	uncached := ToTokensUncached("Hello World")
+	if CacheSize() != 0 {
+		t.Fatalf("expected an empty cache, got %d entries", CacheSize())
+	}
+
+	cached := ToTokens("Hello World")
+	if !slices.EqualFunc(uncached, cached, slices.Equal) {
+		t.Fatalf("expected %v, got %v", cached, uncached)
 	}
 }
 
