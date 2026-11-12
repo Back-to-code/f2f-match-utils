@@ -25,6 +25,17 @@ func CacheSize() int {
 // When you want the strictest token variant use the first response (resp[0]) but do note that resp might be a empty slice
 // Note "" will produce [] and not [[]]!
 func ToTokens(in string) [][]Token {
+	return toTokens(in, true)
+}
+
+// ToTokensUncached is ToTokens without adding a miss to the cache, for values that are tokenized
+// once, like the texts of an index. Caching those only pushes the values that repeat out of it and
+// keeps the inputs alive.
+func ToTokensUncached(in string) [][]Token {
+	return toTokens(in, false)
+}
+
+func toTokens(in string, cache bool) [][]Token {
 	lock.RLock()
 	cacheEntry, ok := toTokenCache[in]
 	lock.RUnlock()
@@ -82,7 +93,9 @@ func ToTokens(in string) [][]Token {
 		}
 	}
 
-	addToTokenCacheEntry(in, resp)
+	if cache {
+		addToTokenCacheEntry(in, resp)
+	}
 	return resp
 }
 

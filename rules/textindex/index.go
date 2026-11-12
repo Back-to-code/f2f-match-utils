@@ -11,7 +11,8 @@ import (
 )
 
 type Hit[ID comparable] struct {
-	ID ID
+	ID  ID
+	Tag uint32
 	// Position is the index of the text among the texts stored under ID.
 	Position int
 	// Text is the text as it was stored.
@@ -24,6 +25,7 @@ type Hit[ID comparable] struct {
 
 type entry struct {
 	text uint32
+	tag  uint32
 	raw  string
 }
 
@@ -50,7 +52,8 @@ func New[ID comparable]() *Index[ID] {
 	return &Index[ID]{slotOf: map[ID]uint32{}, corpus: newCorpus()}
 }
 
-// Set stores texts under id, replacing what was stored there before. Without texts it is Delete.
+// Set stores texts under id, replacing what was stored there before. Without texts it is Delete. The
+// texts are untagged, so setting the texts Get returns drops the tags AppendTagged gave them.
 func (ix *Index[ID]) Set(id ID, texts ...string) {
 	ix.mu.Lock()
 	defer ix.mu.Unlock()
@@ -67,7 +70,7 @@ func (ix *Index[ID]) Set(id ID, texts ...string) {
 	// The new texts are attached before the old ones are detached, so a text the id keeps is not
 	// unindexed and indexed again.
 	for position, raw := range texts {
-		entries[position] = entry{ix.corpus.attach(raw, owner{slotID, uint32(position)}), raw}
+		entries[position] = ix.newEntry(raw, owner{slotID, uint32(position)}, 0)
 	}
 	for position, previous := range old {
 		ix.corpus.detach(previous.text, owner{slotID, uint32(position)})
@@ -83,15 +86,54 @@ func (ix *Index[ID]) Append(id ID, texts ...string) {
 	}
 	ix.mu.Lock()
 	defer ix.mu.Unlock()
+	for _, raw := range texts {
+		ix.append(id, 0, raw)
+	}
+}
+
+// AppendTagged adds a text after the texts already stored under id, with a tag its hits carry.
+func (ix *Index[ID]) AppendTagged(id ID, tag uint32, text string) {
+	ix.mu.Lock()
+	defer ix.mu.Unlock()
+	ix.append(id, tag, text)
+}
+
+func (ix *Index[ID]) append(id ID, tag uint32, raw string) {
 	slotID, ok := ix.slotOf[id]
 	if !ok {
 		slotID = ix.newSlot(id)
 	}
 	stored := &ix.slots[slotID]
-	for _, raw := range texts {
-		stored.entries = append(stored.entries, entry{ix.corpus.attach(raw, owner{slotID, uint32(len(stored.entries))}), raw})
+	stored.entries = append(stored.entries, ix.newEntry(raw, owner{slotID, uint32(len(stored.entries))}, tag))
+	ix.entries++
+}
+
+func (ix *Index[ID]) newEntry(raw string, by owner, tag uint32) entry {
+	textID := ix.corpus.attach(raw, by)
+	if textID != noText {
+		raw = ix.sharedRaw(&ix.corpus.texts[textID], raw, by)
 	}
-	ix.entries += len(texts)
+	return entry{text: textID, tag: tag, raw: raw}
+}
+
+// sharedRaw returns the string of an earlier owner that stored the same raw, or raw: many ids store
+// the same text and would each keep a copy alive. Only the first and the latest owners are tried.
+func (ix *Index[ID]) sharedRaw(stored *text, raw string, by owner) string {
+	candidates := append(make([]owner, 0, 4), stored.first)
+	for idx := len(stored.more) - 1; idx >= 0 && len(candidates) < 4; idx-- {
+		if stored.more[idx] != by {
+			candidates = append(candidates, stored.more[idx])
+		}
+	}
+	for _, candidate := range candidates {
+		// Set attaches before it replaces, so the owner's entry may not be stored yet; any equal
+		// string will do.
+		entries := ix.slots[candidate.slot].entries
+		if int(candidate.position) < len(entries) && entries[candidate.position].raw == raw {
+			return entries[candidate.position].raw
+		}
+	}
+	return raw
 }
 
 // Delete removes the texts stored under id and reports whether there were any.
@@ -149,6 +191,27 @@ func (ix *Index[ID]) Len() int {
 	ix.mu.RLock()
 	defer ix.mu.RUnlock()
 	return len(ix.slotOf)
+}
+
+// Trim gives back the spare capacity that adding texts one by one leaves in the many small lists of the
+// index; for after a bulk load. A list regains it once it grows again.
+func (ix *Index[ID]) Trim() {
+	ix.mu.Lock()
+	defer ix.mu.Unlock()
+	for idx := range ix.slots {
+		ix.slots[idx].entries = trimmed(ix.slots[idx].entries)
+	}
+	ix.corpus.trim()
+}
+
+func trimmed[T any](list []T) []T {
+	if cap(list) == len(list) {
+		return list
+	}
+	if len(list) == 0 {
+		return nil
+	}
+	return append(make([]T, 0, len(list)), list...)
 }
 
 type Stats struct {
@@ -215,6 +278,7 @@ func (ix *Index[ID]) Match(set *rules.Compiled) []Hit[ID] {
 				hits = append(hits, Hit[ID]{
 					ID:       stored.id,
 					Position: position,
+					Tag:      entry.tag,
 					Text:     entry.raw,
 					Include:  int(include),
 					Rule:     set.Set.Includes[include],

@@ -7,6 +7,7 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"unsafe"
 
 	"github.com/Back-to-code/f2f-match-utils/rules"
 	"github.com/Back-to-code/f2f-match-utils/rules/internal/synth"
@@ -17,27 +18,42 @@ import (
 type reference struct {
 	ids   []int
 	texts map[int][]string
+	tags  map[int][]uint32
 }
 
-func newReference() *reference { return &reference{texts: map[int][]string{}} }
+func newReference() *reference {
+	return &reference{texts: map[int][]string{}, tags: map[int][]uint32{}}
+}
 
 func (r *reference) set(id int, texts []string) {
 	if _, ok := r.texts[id]; !ok {
 		r.ids = append(r.ids, id)
 	}
 	r.texts[id] = texts
+	r.tags[id] = make([]uint32, len(texts))
 	if len(texts) == 0 {
 		r.delete(id)
 	}
 }
 
+func (r *reference) append(id int, tag uint32, texts ...string) {
+	tags := r.tags[id]
+	r.set(id, append(slices.Clone(r.texts[id]), texts...))
+	for range texts {
+		tags = append(tags, tag)
+	}
+	r.tags[id] = tags
+}
+
 func (r *reference) delete(id int) {
 	delete(r.texts, id)
+	delete(r.tags, id)
 	r.ids = slices.DeleteFunc(r.ids, func(other int) bool { return other == id })
 }
 
 type found struct {
 	id, position, include int
+	tag                   uint32
 	text                  string
 }
 
@@ -46,7 +62,7 @@ func (r *reference) match(set *rules.Compiled) map[found]bool {
 	for _, id := range r.ids {
 		for position, text := range r.texts[id] {
 			if include := set.Match(text); include >= 0 {
-				out[found{id, position, include, text}] = true
+				out[found{id, position, include, r.tags[id][position], text}] = true
 			}
 		}
 	}
@@ -61,7 +77,7 @@ func check(t *testing.T, ix *Index[int], ref *reference, sets []*rules.Compiled)
 		hits := ix.Match(set)
 		got := map[found]bool{}
 		for idx, hit := range hits {
-			key := found{hit.ID, hit.Position, hit.Include, hit.Text}
+			key := found{hit.ID, hit.Position, hit.Include, hit.Tag, hit.Text}
 			if got[key] {
 				t.Fatalf("%v: hit %+v twice", set.Set, hit)
 			}
@@ -131,23 +147,30 @@ func TestWrites(t *testing.T) {
 	probes := sets(gen, 40)
 	for step := range 6000 {
 		id := rng.IntN(400)
-		switch roll := rng.IntN(10); {
-		case roll == 0:
+		switch rng.IntN(10) {
+		case 0:
 			ix.Delete(id)
 			ref.delete(id)
-		case roll == 1:
+		case 1:
 			extra := texts(gen, 1+rng.IntN(2))
 			ix.Append(id, extra...)
-			ref.set(id, append(slices.Clone(ref.texts[id]), extra...))
-		case roll == 2:
+			ref.append(id, 0, extra...)
+		case 2:
 			// Rewriting an ID with the texts it has must leave everything as it was.
 			kept := ix.Get(id)
 			ix.Set(id, kept...)
 			ref.set(id, kept)
+		case 3:
+			text, tag := texts(gen, 1)[0], rng.Uint32()
+			ix.AppendTagged(id, tag, text)
+			ref.append(id, tag, text)
 		default:
 			stored := texts(gen, rng.IntN(4))
 			ix.Set(id, stored...)
 			ref.set(id, stored)
+		}
+		if step%700 == 0 {
+			ix.Trim()
 		}
 		if step%1000 == 999 {
 			check(t, ix, ref, probes)
@@ -294,6 +317,23 @@ func TestHits(t *testing.T) {
 	}
 	if estimate := ix.Estimate(rules.Pattern{Kind: rules.Prefix, Text: "magazijn"}); estimate != 5 {
 		t.Fatalf("estimate %v", estimate)
+	}
+}
+
+func TestEqualTextsShareTheirString(t *testing.T) {
+	ix := New[int]()
+	ix.Set(1, strings.Clone("Kok"))
+	ix.Append(2, strings.Clone("Kok"))
+	ix.AppendTagged(3, 7, strings.Clone("Kok"))
+	ix.Set(4, strings.Clone("KOK"))
+	first := unsafe.StringData(ix.Get(1)[0])
+	for _, id := range []int{2, 3} {
+		if unsafe.StringData(ix.Get(id)[0]) != first {
+			t.Fatalf("text of %d is a copy", id)
+		}
+	}
+	if unsafe.StringData(ix.Get(4)[0]) == first || ix.Get(4)[0] != "KOK" {
+		t.Fatalf("a text that differs in case got %q", ix.Get(4)[0])
 	}
 }
 
