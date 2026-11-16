@@ -193,14 +193,16 @@ func (ix *Index[ID]) Len() int {
 	return len(ix.slotOf)
 }
 
-// Trim gives back the spare capacity that adding texts one by one leaves in the many small lists of the
-// index; for after a bulk load. A list regains it once it grows again.
+// Trim gives back the spare capacity that adding texts one by one leaves in the lists of the index;
+// for after a bulk load. A list regains it once it grows again.
 func (ix *Index[ID]) Trim() {
 	ix.mu.Lock()
 	defer ix.mu.Unlock()
 	for idx := range ix.slots {
 		ix.slots[idx].entries = trimmed(ix.slots[idx].entries)
 	}
+	ix.slots = trimmed(ix.slots)
+	ix.freeSlots = trimmed(ix.freeSlots)
 	ix.corpus.trim()
 }
 
@@ -227,7 +229,7 @@ type Stats struct {
 func (ix *Index[ID]) Stats() Stats {
 	ix.mu.RLock()
 	defer ix.mu.RUnlock()
-	return Stats{IDs: len(ix.slotOf), Texts: ix.entries, DistinctTexts: len(ix.corpus.textOf), Words: len(ix.corpus.wordOf)}
+	return Stats{IDs: len(ix.slotOf), Texts: ix.entries, DistinctTexts: ix.corpus.textOf.len(), Words: ix.corpus.wordOf.len()}
 }
 
 // Estimate returns how many stored texts the pattern matches, about. It fits ruleindex.Estimator, so

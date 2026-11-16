@@ -186,7 +186,7 @@ of the texts.
 
 | | size | per call | index memory | build |
 | --- | --- | --- | --- | --- |
-| `textindex.Match`, a set of 20 includes and 3 excludes | 1M texts (635k distinct) | 0.6 ms | 275 MB | 1.7 s |
+| `textindex.Match`, a set of 20 includes and 3 excludes | 1M texts (635k distinct) | 0.6 ms | 210 MB | 1.7 s |
 | `textindex.Set`, replace the 3 texts of an ID | 1M texts | 24 µs | | |
 | `ruleindex.Match`, one text | 1M rules (20k sets) | 22 µs | 390 MB | 2.3 s |
 | `ruleindex.Set`, replace a set of 50 includes | 1M rules | 0.7 ms | | |
@@ -207,10 +207,11 @@ lookup. Prefix and suffix patterns are a range in the words sorted forwards or b
 patterns read the words that have the pattern's two rarest four-letter grams, which works because
 wildcard words have at least four letters. A joined pair is left out of a prefix range when its left
 word is at least as long as the prefix: the text then also has that word, which starts with the prefix
-too. Each rule is evaluated with bitmaps over the distinct texts, and the excludes and first-match
-attribution are bitmap operations too. Of the 0.6 ms above, about 0.2 ms is the matching and the rest
-is collecting the 7k hits, so a set that matches less is faster. Words and postings are updated in
-place on every write.
+too. For the same reason a joined pair that is never a word on its own is only listed under the grams
+that cross its join. Each rule is evaluated with bitmaps over the distinct texts, and the excludes and
+first-match attribution are bitmap operations too. Of the 0.6 ms above, about 0.2 ms is the matching
+and the rest is collecting the 7k hits, so a set that matches less is faster. Words and postings are
+updated in place on every write.
 
 **ruleindex** puts every pattern of every rule in four hash maps. For each word of a text it probes the
 whole word, its prefixes, its suffixes and its substrings, with a 4-letter bit filter skipping most

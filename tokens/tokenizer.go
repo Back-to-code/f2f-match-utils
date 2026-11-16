@@ -1,6 +1,7 @@
 package tokens
 
 import (
+	"strings"
 	"sync"
 )
 
@@ -108,7 +109,9 @@ func addToTokenCacheEntry(key string, value [][]Token) {
 		}
 	}
 
-	toTokenCache[key] = value
+	// The key is the caller's string, which can point into a much larger buffer, such as a
+	// decoded request body, and the cache outlives it.
+	toTokenCache[strings.Clone(key)] = value
 }
 
 func CleanupCache() {
